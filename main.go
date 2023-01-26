@@ -11,7 +11,7 @@ func main() {
 	cache := cache.New()
 
 	cache.Set("Danil", 18)
-  cache.Set("userId", 919)
+  cache.Set("userId", "id")
 	cache.Set("Sofii", 19)
 
 	fmt.Println(cache)
@@ -20,5 +20,6 @@ func main() {
 	fmt.Println(userId)
 
 	cache.Delete("userId")
+	fmt.Println(cache)
 
 }

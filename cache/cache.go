@@ -1,27 +1,23 @@
 package cache
 
-import "fmt"
-
-// type Map map[string]interface{}
-
-type Map map[string]int32
-
-func New() Map {
-	return make(Map)
+type Cache struct {
+	cache map[string]interface{}
 }
 
-func (m Map) Set(key string, value int32) {
-	m[key] = value
-}
-
-func (m Map) Get(key string) int32 {
-	for item := range m {
-		fmt.Print("")
-		return m[item]
+func New() Cache {
+	return Cache{
+		cache: make(map[string]interface{}),
 	}
-	return m[key]
 }
 
-func (m Map) Delete(key string) {
-	delete(m, key)
+func (c Cache) Get(key string) interface{} {
+	return c.cache[key]
+}
+
+func (c Cache) Set(key string, value interface{}) {
+	c.cache[key] = value
+}
+
+func (c Cache) Delete(key string) {
+	delete(c.cache, key)
 }
