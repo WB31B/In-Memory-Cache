@@ -3,24 +3,27 @@ package main
 import (
 	"fmt"
 	"golang-cache/cache/cache"
+	"log"
+	"time"
 )
 
 func main() {
-	fmt.Println("[---Start---]")
-
 	cache := cache.New()
 
-	cache.Set("Danil", 18)
-  cache.Set("userId", "id")
-	cache.Set("Sofii", 19)
-	cache.Set("", 4)
+	cache.Set("Danil", 18, time.Second * 5)
+	fmt.Println("MAP:", cache)
 
-	fmt.Println(cache)
+	userId, err := cache.Get("Danil")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("[find] userId:", userId)
 
-	userId := cache.Get("userId")
-	fmt.Println(userId)
+	time.Sleep(time.Second * 6)
 
-	cache.Delete("Danil")
-	fmt.Println(cache)
-
+	userId, err = cache.Get("Danil")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("[delete] userId:", userId)
 }
