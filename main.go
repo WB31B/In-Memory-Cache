@@ -9,21 +9,16 @@ import (
 func main() {
 	cache := cache.New()
 
-	cache.Set("Danil", 18, time.Second * 5)
-	cache.Set("Sofii", 19, time.Second * 5)
-	cache.Set("Artem", 1, time.Second * 5)
-	cache.Set("logged", true, time.Second * 5)
-	cache.Set("title", "Title", time.Second * 5)
+	_, err := cache.Get("test")
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Result: unknown key
 
-	fmt.Println("[Start programm] MAP:", cache)
+	fmt.Println(cache.Delete("user"))
+	// Result: unknown key
 
-	userId := cache.Get("Danil")
-	fmt.Println("[find] userId:", userId)
-
-	time.Sleep(time.Second * 6)
-
-	userId = cache.Get("Danil")
-
-	fmt.Println("[delete] userId:", userId)
-	fmt.Println("[End programm] MAP:", cache)
+	cache.Set("username", "Golang", time.Second * 5)
+	value, _ := cache.Get("username")
+	fmt.Println(value)
 }

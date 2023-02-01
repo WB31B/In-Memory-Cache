@@ -1,45 +1,53 @@
 package cache
 
 import (
-	"fmt"
+	"errors"
 	"sync"
 	"time"
 )
 
 type Cache struct {
 	cache map[string]interface{}
-	mu *sync.Mutex
+	mu    sync.Mutex
 }
 
-func New() Cache {
-	return Cache{
+func New() *Cache {
+	return &Cache{
 		cache: make(map[string]interface{}),
-		mu: new(sync.Mutex),
 	}
 }
 
-func (c Cache) Get(key string) interface{} {
+func (c *Cache) Get(key string) (interface{}, error) {
 	c.mu.Lock()
-	for item := range c.cache {
-		if key == item {
-			defer c.mu.Unlock()
-			return c.cache[key]
-		}
+	defer c.mu.Unlock()
+
+	value, err := c.cache[key]
+	if !err {
+		return nil, errors.New("Unknown key")
 	}
 
-	defer c.mu.Unlock()
-	return "This key is not found"
+	return value, nil
 }
 
-func (c Cache) Set(key string, value interface{}, ttl time.Duration) {
-	// ttl time.Duration - clear cash
-	fmt.Printf("time.Direction: %d : %s\n", ttl, key) // 5s
-	c.cache[key] = value // ... = ...
+func (c *Cache) Set(key string, value interface{}, ttl time.Duration) {
+	c.mu.Lock()
+	c.cache[key] = value
+	c.mu.Unlock()
 
-	go func ()  {
+	go func() {
 		time.Sleep(ttl)
-		c.mu.Lock()
-		delete(c.cache, key)
-		c.mu.Unlock()
+		_ = c.Delete(key)
 	}()
+}
+
+func (c *Cache) Delete(key string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if _, err := c.cache[key]; !err {
+		return errors.New("unknown key")
+	}
+
+	delete(c.cache, key)
+	return nil
 }
